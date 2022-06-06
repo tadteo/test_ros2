@@ -1,0 +1,15 @@
+<launch>
+  
+    <!-- Include simulation -->
+    <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch"/>
+
+    <!-- Include slam -->
+    <include file="$(find turtlebot3_slam)/launch/turtlebot3_slam.launch"/>
+
+    <!-- exploration node -->
+    <!-- <node name="exploration" pkg="turtlebot3_exploration" type="exploration" required="true" output="screen">
+        <param name="cmd_vel_topic_name" value="/cmd_vel"/>
+        <param name="map_topic_name" value="/map"/>
+        <param name="odom_topic_name" value="/odom"/>
+    </node> -->
+</launch>
