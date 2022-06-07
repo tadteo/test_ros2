@@ -4,6 +4,6 @@
     <include file="$(find turtlebot3_exploration)/launch/sim_slam_nav.launch"/>
 
     <!-- exploration node -->
-    <node name="planner" pkg="turtlebot3_exploration" type="planner_example.py" required="true" output="screen">
+    <node name="go_to" pkg="turtlebot3_exploration" type="go_to_point.py" required="true" output="screen">
     </node>
 </launch>

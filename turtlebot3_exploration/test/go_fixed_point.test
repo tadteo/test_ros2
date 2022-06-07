@@ -1,0 +1,6 @@
+<launch>
+    <!-- Include simulation, slam, and navigation -->
+    <include file="$(find turtlebot3_exploration)/launch/sim_slam_nav.launch"/>
+    
+    <test test-name="go_to_goal" pkg="turtlebot3_exploration" type="test.py"/>
+</launch>

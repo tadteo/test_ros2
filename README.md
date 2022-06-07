@@ -8,7 +8,7 @@ We are using:
 ## setup 
 Install the following:
 ```bash
-sudo apt install ros-noetic-turtlebot3 ros-noetic-slam-gmapping
+sudo apt install ros-noetic-turtlebot3 ros-noetic-slam-gmapping ros-noetic-dwa-local-planner
 ```
 
 create workspace and download repo in it:
@@ -31,3 +31,6 @@ export TURTLEBOT3_MODEL=burger
 ```bash
 roslaunch turtlebot3_gazebo turtlebot3_world.launch
 ```
+
+## other
+Moreo info [here](https://emanual.robotis.com/docs/en/platform/turtlebot3/simulation/#gazebo-simulation) 
