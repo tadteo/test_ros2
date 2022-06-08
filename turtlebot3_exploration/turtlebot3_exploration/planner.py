@@ -5,9 +5,9 @@
   sub_map (nav_msgs/OccupancyGrid) - represents a 2-D grid map, in which each cell represents the probability of occupancy.
 """
 
-import rospy
+import rclpy
+import rclpy.node
 import actionlib
-import numpy as np
 from actionlib_msgs.msg import GoalStatus
 from move_base_msgs.msg import MoveBaseFeedback, MoveBaseGoal, MoveBaseAction
 from nav_msgs.msg import OccupancyGrid, Odometry
@@ -17,27 +17,27 @@ from random import randrange
 import time
 
 PKG='turtlebot3_exploration'
-class Planner:
+class Planner(rclpy.node.Node):
 
     def __init__(self):
         """ Initialize environment
         """
-        
+        super().init("planner_node")
         # Initialize rate:
-        self.rate = rospy.Rate(1)
+        self.rate = rclpy.Rate(1)
 
         # Move Base Action Client:
         self.move_base = actionlib.SimpleActionClient('move_base', MoveBaseAction)
-        self.move_base.wait_for_server(rospy.Duration(5.0))
-        rospy.loginfo("move_base is ready") 
+        self.move_base.wait_for_server(rclpy.Duration(5.0))
+        self.get_logger().info("move_base is ready") 
 
         # Initialize subscribers:
         self.map = OccupancyGrid()
         self.odom = Odometry()
-        self.map_sub = rospy.Subscriber('/map', OccupancyGrid, self.map_callback)
-        self.odom_sub = rospy.Subscriber('/odom', Odometry, self.odom_callback)
+        self.map_sub = self.create_subscription('/map', OccupancyGrid, self.map_callback)
+        self.odom_sub = self.create_subscription('/odom', Odometry, self.odom_callback)
         
-        self.goal_status_sub = rospy.Subscriber('/move_base/status', GoalStatus, self.goal_status_callback)
+        self.goal_status_sub = self.create_subscription('/move_base/status', GoalStatus, self.goal_status_callback)
         
         self.goal_point = None
         self.goal = None
@@ -48,11 +48,11 @@ class Planner:
         """ Main loop for planner.
         """
         
-        while not rospy.is_shutdown():
+        while not rclpy.is_shutdown():
                         
-            # rospy.loginfo(f"odom: {self.odom.child_frame_id, self.odom.pose.pose.position.x, self.odom.pose.pose.position.y}")
-            rospy.logdebug(f"State: {self.status_list}")
-            rospy.sleep(2)
+            # self.get_logger().info(f"odom: {self.odom.child_frame_id, self.odom.pose.pose.position.x, self.odom.pose.pose.position.y}")
+            self.get_logger().debug(f"State: {self.status_list}")
+            rclpy.sleep(2)
     
     def goal_status_callback(self, data):
         """ Check the status of a goal - goal reached, aborted,
@@ -81,24 +81,24 @@ class Planner:
         """ Callback function for base feedback subscriber.
         """
         self.base_feedback = data
-        # rospy.logdebug("Feedback: " + str(data))
+        # self.get_logger().debug("Feedback: " + str(data))
 
     def go_to_goal(self,x=None,y=None):
         """ Set goal position for move_base.
         """
-        rospy.loginfo("Setting goal")
+        self.get_logger().info("Setting goal")
 
         # Create goal:
         goal = MoveBaseGoal()
 
         # Set random goal:
         goal.target_pose.header.frame_id = "map"
-        goal.target_pose.header.stamp = rospy.Time.now()
+        goal.target_pose.header.stamp = rclpy.Time.now()
         goal.target_pose.pose.position.x = x
         goal.target_pose.pose.position.y = y
         goal.target_pose.pose.orientation.w = 1.0
         
-        rospy.loginfo(f"goal: {goal}")
+        self.get_logger().info(f"goal: {goal}")
         
         self.move_base.send_goal(goal)
         return goal
